@@ -79,10 +79,6 @@ public class HomeFragment extends Fragment {
             }
         });
 
-//        executorService.execute (this::showUserName);
-//
-//        binding.tvUserEmail.setText (Objects.requireNonNull (auth.getCurrentUser ()).getEmail ());
-
         binding.tvHistoryUser.setOnClickListener (v -> {
 
         });
@@ -124,31 +120,5 @@ public class HomeFragment extends Fragment {
         });
 
         return binding.getRoot ();
-    }
-
-    private void showUserName() {
-        db.collection ("users")
-                .document (Objects.requireNonNull (auth.getUid ()))
-                .get ()
-                .addOnSuccessListener (documentSnapshot -> {
-                    if (documentSnapshot.exists ()) {
-                        requireActivity ().runOnUiThread (() -> {
-                            String email = documentSnapshot.getString ("name");
-                            binding.tvUserName.setText (email);
-                        });
-                    }
-                })
-                .addOnFailureListener (e -> {
-                    String errorMessage = Objects.requireNonNull (e).getMessage ();
-                    if (requireActivity () instanceof MainActivity)
-                        ((MainActivity) requireActivity ()).showErrorAlertDialog (errorMessage, context);
-                })
-                .addOnCanceledListener (() -> {
-                    requireActivity ().runOnUiThread (() -> {
-                        String errorMessage = "The get Email of current user task has been cancelled. Please again later";
-                        if (requireActivity () instanceof MainActivity)
-                            ((MainActivity) requireActivity ()).showErrorAlertDialog (errorMessage, context);
-                    });
-                });
     }
 }

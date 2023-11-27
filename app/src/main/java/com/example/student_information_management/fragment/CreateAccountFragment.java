@@ -75,12 +75,14 @@ public class CreateAccountFragment extends Fragment {
                     .addOnCompleteListener (requireActivity (), task -> {
                         if (task.isSuccessful ()) {
                             requireActivity ().runOnUiThread (() -> {
-                                MyViewModel model = new ViewModelProvider (requireActivity ()).get (MyViewModel.class);
-                                model.setUserEmailRegister (email);
+                                binding.etEmail.setText ("");
+                                binding.etPassword.setText ("");
+                                binding.etRePassword.setText ("");
 
-                                if (requireActivity () instanceof MainActivity) {
-                                    ((MainActivity) requireActivity ()).replaceFragment (new ProvideInfoUserFragment ());
-                                }
+                                Intent intent = new Intent (getContext (), ProvideInfoUserActivity.class);
+                                intent.putExtra ("EMAIL", email);
+                                intent.putExtra ("PASSWORD", password);
+                                startActivity (intent);
                             });
                         } else {
                             requireActivity ().runOnUiThread (() -> {

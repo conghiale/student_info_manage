@@ -3,6 +3,7 @@ package com.example.student_information_management.model;
 public class User {
     private String uid;
     private String email;
+    private String password;
     private String name;
     private int age;
     private String phoneNumber;
@@ -15,6 +16,7 @@ public class User {
     public User(String uid) {
         this.uid = uid;
         this.email = "";
+        this.password = "";
         this.name = "";
         this.age = 0;
         this.phoneNumber = "";
@@ -22,9 +24,10 @@ public class User {
         this.role = "";
     }
 
-    public User(String uid, String email, String name, int age, String phoneNumber, String status, String role) {
+    public User(String uid, String email, String password, String name, int age, String phoneNumber, String status, String role) {
         this.uid = uid;
         this.email = email;
+        this.password = password;
         this.name = name;
         this.age = age;
         this.phoneNumber = phoneNumber;
@@ -46,6 +49,14 @@ public class User {
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
     }
 
     public String getName() {

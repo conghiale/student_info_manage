@@ -16,10 +16,14 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.AppCompatButton;
 import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.lifecycle.ViewModelProvider;
 
 import com.example.student_information_management.databinding.ActivityLoginBinding;
+import com.example.student_information_management.model.User;
+import com.example.student_information_management.view_model.MyViewModel;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.Objects;
 import java.util.concurrent.ExecutorService;
@@ -29,6 +33,7 @@ public class LoginActivity extends AppCompatActivity {
 
     private ActivityLoginBinding binding;
     private FirebaseAuth auth;
+    private FirebaseFirestore db;
     private ExecutorService executorService;
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -37,6 +42,7 @@ public class LoginActivity extends AppCompatActivity {
         setContentView (binding.getRoot ());
 
         auth = FirebaseAuth.getInstance ();
+        db = FirebaseFirestore.getInstance ();
         executorService = Executors.newFixedThreadPool (1);
 
         binding.btnLogin.setOnClickListener (v -> {
@@ -57,10 +63,8 @@ public class LoginActivity extends AppCompatActivity {
     protected void onStart() {
         super.onStart ();
         FirebaseUser currentUser = auth.getCurrentUser();
-        Log.d ("TAG", "onStart: ");
         if (currentUser != null) {
             Intent intent = new Intent (this, MainActivity.class);
-            intent.putExtra ("EMAIL", currentUser.getEmail ());
             startActivity (intent);
             finish ();
         }
@@ -81,7 +85,6 @@ public class LoginActivity extends AppCompatActivity {
                                 FirebaseUser user = auth.getCurrentUser();
                                 if (user != null) {
                                     Intent intent = new Intent (LoginActivity.this, MainActivity.class);
-                                    intent.putExtra ("EMAIL", email);
                                     startActivity (intent);
                                     finish ();
                                 }

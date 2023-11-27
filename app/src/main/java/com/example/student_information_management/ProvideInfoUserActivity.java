@@ -4,47 +4,38 @@ import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
-import android.util.Patterns;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ArrayAdapter;
-import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.AppCompatButton;
 import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.lifecycle.ViewModelProvider;
 
-import com.example.student_information_management.databinding.ActivityLoginBinding;
 import com.example.student_information_management.databinding.ActivityProvideInfoUserBinding;
 import com.example.student_information_management.model.User;
-import com.google.android.gms.tasks.OnCanceledListener;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.SuccessContinuation;
-import com.google.android.gms.tasks.Task;
+import com.example.student_information_management.view_model.MyViewModel;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.atomic.AtomicReference;
 
 public class ProvideInfoUserActivity extends AppCompatActivity {
 
     private ActivityProvideInfoUserBinding binding;
     private FirebaseFirestore db;
+    private FirebaseAuth auth;
     private ExecutorService executorService;
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -53,6 +44,7 @@ public class ProvideInfoUserActivity extends AppCompatActivity {
         setContentView (binding.getRoot ());
 
         db = FirebaseFirestore.getInstance ();
+        auth = FirebaseAuth.getInstance ();
         executorService = Executors.newFixedThreadPool (1);
 
         init();
@@ -76,13 +68,13 @@ public class ProvideInfoUserActivity extends AppCompatActivity {
             String role = Objects.requireNonNull (binding.role.getText ()).toString ().trim ();
 
             Intent intent = getIntent ();
-            String email = "";
-            if (intent != null)
-                email = intent.getStringExtra ("EMAIL");
-
-            if (email != null && checkErrorInput (name, age, phoneNumber, status)) {
-                int intAge = Integer.parseInt (age);
-                providerInfoUserInBackground (new User (uid, email, name, intAge, phoneNumber, status, role));
+            if (intent != null) {
+                String email = intent.getStringExtra ("EMAIL");
+                String password = intent.getStringExtra ("PASSWORD");
+                if (email != null && password != null && checkErrorInput (name, age, phoneNumber, status)) {
+                    int intAge = Integer.parseInt (age);
+                    providerInfoUserInBackground (new User (uid, email, password, name, intAge, phoneNumber, status, role));
+                }
             }
         });
     }
@@ -96,25 +88,13 @@ public class ProvideInfoUserActivity extends AppCompatActivity {
 
     private void providerInfoUserInBackground(User user) {
         executorService.execute (() -> {
-//            Map<String, Object> user = new HashMap<> ();
-//            user.put ("email", email);
-//            user.put ("name", name);
-//            user.put ("age", age);
-//            user.put ("phoneNumber", phoneNumber);
-//            user.put ("status", status);
-
             String id = Objects.requireNonNull (FirebaseAuth.getInstance ().getCurrentUser ()).getUid ();
 
             db.collection ("users")
                     .document (id)
                     .set (user)
                     .addOnSuccessListener (unused -> {
-                        runOnUiThread (() -> {
-                            FirebaseAuth.getInstance ().signOut ();
-                            Toast.makeText (this, "User " + user.getName () +" added with \nID: " + id, Toast.LENGTH_LONG).show ();
-                            startActivity (new Intent (this, LoginActivity.class));
-                            finish ();
-                        });
+                        reLogin (user.getName (), user.getUid ());
                     })
                     .addOnFailureListener (e ->     {
                         runOnUiThread (() -> {
@@ -129,6 +109,42 @@ public class ProvideInfoUserActivity extends AppCompatActivity {
                     });
         });
     }
+
+    private void reLogin(String name, String id) {
+        AtomicReference<String> email = new AtomicReference<> ();
+        AtomicReference<String> password = new AtomicReference<> ();
+
+        MainActivity.model.getCurrentUser ().observe (this, user -> {
+            email.set (user.getEmail ());
+            password.set (user.getPassword ());
+        });
+
+        executorService.execute (() -> {
+            auth.signInWithEmailAndPassword (email.get (), password.get ())
+                    .addOnCompleteListener(this, task -> {
+                        if (task.isSuccessful()) {
+                            runOnUiThread (() -> {
+                                FirebaseUser user = auth.getCurrentUser();
+                                if (user != null) {
+                                    Toast.makeText (this, "User " + name +" added with \nID: " + id, Toast.LENGTH_LONG).show ();
+                                    startActivity (new Intent (this, MainActivity.class));
+                                    finish ();
+                                }
+                            });
+                        } else {
+                            runOnUiThread (() -> {
+                                String errorMessage = Objects.requireNonNull (task.getException ()).getMessage ();
+                                showErrorAlertDialog(errorMessage);
+                            });
+                        }
+                    }).addOnCanceledListener (() ->
+                            runOnUiThread (() -> {
+                                showErrorAlertDialog("The system is maintenance. The Login task has been cancelled. Please Login again later");
+                            })
+                    );
+        });
+    }
+
     private boolean checkErrorInput(String name, String age, String phoneNumber, String status) {
         if (name.isEmpty ())
             binding.etName.setError ("Please enter user name");

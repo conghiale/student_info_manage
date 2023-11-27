@@ -53,7 +53,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private ActivityMainBinding binding;
     private ExecutorService executorService;
     private FirebaseFirestore db;
-
+    public static MyViewModel model;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate (savedInstanceState);
@@ -62,6 +62,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         setSupportActionBar (binding.toolbar);
         Objects.requireNonNull (getSupportActionBar ()).setTitle ("");
+        model = new ViewModelProvider (this).get (MyViewModel.class);
+
+        init();
 
         binding.navView.setNavigationItemSelectedListener (this);
 
@@ -74,8 +77,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             getSupportFragmentManager ().beginTransaction ().replace (R.id.fragment_container, new HomeFragment ()).commit ();
             binding.navView.setCheckedItem (R.id.nav_home);
         }
-
-        init();
 
         OnBackPressedCallback callback = new OnBackPressedCallback (true) {
             @Override
@@ -91,32 +92,23 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     }
 
     private void init() {
-        Log.d ("TAG", "init: ");
         executorService = Executors.newFixedThreadPool (1);
         db = FirebaseFirestore.getInstance ();
         getCurrentUser ();
     }
     private void getCurrentUser() {
-        Log.d ("TAG", "getCurrentUser: " + Objects.requireNonNull (FirebaseAuth.getInstance ().getUid ()));
         executorService.execute (() -> {
             db.collection ("users")
                     .document (Objects.requireNonNull (FirebaseAuth.getInstance ().getUid ()))
                     .get ()
                     .addOnSuccessListener (documentSnapshot -> {
                         if (documentSnapshot.exists ()) {
-                            User user = documentSnapshot.toObject (User.class);
-                            Log.d ("TAG", "getCurrentUser: 1");
-
-                            if (user != null) {
-                                MyViewModel model = new ViewModelProvider (this).get (MyViewModel.class);
-                                model.setCurrentUser (user);
-                                runOnUiThread (() -> {
-                                    Log.d ("TAG", "getCurrentUser: 2");
-                                    if (!user.getRole ().equals ("Admin")) {
-                                        binding.navView.getMenu ().findItem (R.id.nav_CreateAccount).setVisible (false);
-                                    }
-                                });
-                            }
+                            runOnUiThread (() -> {
+                                User user = documentSnapshot.toObject (User.class);
+                                if (user != null) {
+                                    model.setCurrentUser (user);
+                                }
+                            });
                         }
                     })
                     .addOnCanceledListener (() -> {
@@ -127,7 +119,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     });
         });
     }
-
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         int itemID = item.getItemId ();
@@ -157,7 +148,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         binding.drawerLayout.closeDrawer (GravityCompat.START);
         return true;
     }
-
     public void replaceFragment(Fragment fragment) {
         if (fragment instanceof ChangePasswordFragment) {
             Objects.requireNonNull (getSupportActionBar ()).setBackgroundDrawable (new ColorDrawable (ContextCompat.getColor (this, R.color.purple3)));
@@ -176,7 +166,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 .replace(R.id.fragment_container, fragment)
                 .commit();
     }
-
     public void showErrorAlertDialog(String message, Context context) {
         AlertDialog.Builder builder = new AlertDialog.Builder (context, R.style.AlertDialogTheme);
         View view = LayoutInflater.from (context).inflate (
@@ -198,7 +187,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         alertDialog.show ();
         alertDialog.setCancelable(false);
     }
-
     public void showSuccessAlertDialog(String message, Context context, String toastMessage) {
         AlertDialog.Builder builder = new AlertDialog.Builder (context, R.style.AlertDialogTheme);
         View view = LayoutInflater.from (context).inflate (

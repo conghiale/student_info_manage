@@ -1,13 +1,7 @@
 package com.example.student_information_management.fragment;
 
-import android.annotation.SuppressLint;
-import android.content.Intent;
-import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 
-import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.widget.AppCompatButton;
-import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
@@ -15,13 +9,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
-import android.widget.ImageView;
-import android.widget.TextView;
 import android.widget.Toast;
 
-import com.example.student_information_management.LoginActivity;
 import com.example.student_information_management.MainActivity;
-import com.example.student_information_management.ProvideInfoUserActivity;
 import com.example.student_information_management.R;
 import com.example.student_information_management.databinding.FragmentProvideInfoUserBinding;
 import com.example.student_information_management.model.User;
@@ -77,18 +67,14 @@ public class ProvideInfoUserFragment extends Fragment {
             String status = Objects.requireNonNull (binding.status.getText ()).toString ().trim ();
             String role = Objects.requireNonNull (binding.role.getText ()).toString ().trim ();
 
-            AtomicReference<String> email = new AtomicReference<> ();
-            MyViewModel model = new ViewModelProvider (requireActivity ()).get (MyViewModel.class);
-            model.getUserEmailRegister ().observe (getViewLifecycleOwner (), email::set);
-
-            if (email.get () != null && checkErrorInput (name, age, phoneNumber, status)) {
-                int intAge = Integer.parseInt (age);
-                providerInfoUserInBackground (new User (uid, email.get (), name, intAge, phoneNumber, status, role));
-            }
-            if (email.get () != null && checkErrorInput (name, age, phoneNumber,"status")) {
-                int intAge = Integer.parseInt (age);
-                providerInfoUserInBackground (new User (uid, email.get (), name, intAge, phoneNumber, "status", "role"));
-            }
+//            AtomicReference<String> email = new AtomicReference<> ();
+//            MyViewModel model = new ViewModelProvider (requireActivity ()).get (MyViewModel.class);
+//            model.getCurrentPassword ().observe (getViewLifecycleOwner (), email::set);
+//
+//            if (email.get () != null && checkErrorInput (name, age, phoneNumber, status)) {
+//                int intAge = Integer.parseInt (age);
+//                providerInfoUserInBackground (new User (uid, email.get (), name, intAge, phoneNumber, status, role));
+//            }
         });
     }
     private void providerInfoUserInBackground(User user) {
