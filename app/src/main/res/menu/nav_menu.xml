@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:showIn = "navigation_view">
+
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/nav_home"
+            android:title="Home"
+            android:icon="@drawable/icon_home" />
+        <item
+            android:id="@+id/nav_users"
+            android:title="List User"
+            android:icon="@drawable/icon_profile_4" />
+        <item
+            android:id="@+id/nav_history_user"
+            android:title="History User"
+            android:icon="@drawable/icon_history_user"
+            android:iconTint="@color/purple3"/>
+        <item
+            android:id="@+id/nav_students"
+            android:title="List Student"
+            android:icon="@drawable/icon_list_student"
+            android:iconTint="@color/purple3"/>
+        <item
+            android:id="@+id/nav_CreateAccount"
+            android:title="Create Account"
+            android:icon="@drawable/icon_profile_5" />
+
+        <item android:title=""/>
+    </group>
+
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/nav_change_password"
+            android:title="Change Password"
+            android:icon="@drawable/icon_lock"
+            android:iconTint="#BDC581"/>
+        <item
+            android:id="@+id/nav_change_email"
+            android:title="Change Email"
+            android:icon="@drawable/icon_mail"
+            android:iconTint="#f5cd79"/>
+        <item
+            android:id="@+id/nav_change_profile_picture"
+            android:title="change profile picture"
+            android:icon="@drawable/icon_profile_3"/>
+
+        <item android:title=""/>
+    </group>
+
+    <item
+        android:id="@+id/nav_logout"
+        android:title="Log Out"
+        android:icon="@drawable/icon_profile_6"/>
+</menu>
