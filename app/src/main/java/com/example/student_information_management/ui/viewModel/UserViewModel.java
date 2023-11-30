@@ -14,7 +14,6 @@ import java.util.List;
 
 public class UserViewModel extends ViewModel {
     private MutableLiveData<List<User>> users = new MutableLiveData<>();
-    private MutableLiveData<Exception> userLoadError = new MutableLiveData<>();
     private UserRepository userRepository = new UserRepository();
 
     public LiveData<List<User>> getUsers() {
@@ -22,12 +21,8 @@ public class UserViewModel extends ViewModel {
         return users;
     }
 
-    public LiveData<Exception> getUserLoadError() {
-        return userLoadError;
-    }
-
     public void loadUsers() {
-        userRepository.getUsers(users, userLoadError);
+        userRepository.getUsers(users);
     }
 }
 

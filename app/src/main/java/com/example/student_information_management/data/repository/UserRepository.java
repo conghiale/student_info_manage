@@ -1,18 +1,27 @@
 package com.example.student_information_management.data.repository;
 
+import android.view.View;
+
 import androidx.lifecycle.MutableLiveData;
 
 import com.example.student_information_management.data.model.User;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.atomic.AtomicReference;
 
 public class UserRepository {
-    public void getUsers(MutableLiveData<List<User>> usersLiveData, MutableLiveData<Exception> errorLiveData) {
-        FirebaseFirestore db = FirebaseFirestore.getInstance();
+    private FirebaseFirestore db = FirebaseFirestore.getInstance();
+    private FirebaseAuth auth = FirebaseAuth.getInstance();
+    public void getUsers(MutableLiveData<List<User>> usersLiveData) {
         db.collection("users")
+                .whereNotEqualTo("role", "Admin")
                 .get()
                 .addOnSuccessListener(queryDocumentSnapshots -> {
                     List<User> userList = new ArrayList<>();
@@ -22,9 +31,18 @@ public class UserRepository {
                         userList.add(user);
                     }
                     usersLiveData.setValue(userList);
-                })
-                //Method Reference
-                .addOnFailureListener(errorLiveData::setValue);
+                });
+    }
+    public void deleteUser(User user, OnCompleteListener<Void> onCompleteListener) {
+        db.collection("users").document(user.getUid())
+                .delete()
+                .addOnCompleteListener(onCompleteListener);
+    }
+
+    public void editUser(String userId, Map<String, Object> updatedUser, OnCompleteListener<Void> onCompleteListener) {
+        db.collection("users").document(userId)
+                .update(updatedUser)
+                .addOnCompleteListener(onCompleteListener);
     }
 }
 

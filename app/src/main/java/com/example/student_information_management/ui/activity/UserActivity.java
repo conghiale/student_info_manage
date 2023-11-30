@@ -33,6 +33,7 @@ public class UserActivity extends AppCompatActivity {
 
         viewModel.getUsers().observe(this, users -> {
             adapter = new UserAdapter(users);
+            adapter.setContext(this);
             binding.rcvUser.setAdapter(adapter);
         });
 

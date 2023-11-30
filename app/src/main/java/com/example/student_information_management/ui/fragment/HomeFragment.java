@@ -16,6 +16,7 @@ import android.view.ViewGroup;
 import com.example.student_information_management.ui.activity.IntroActivity;
 import com.example.student_information_management.MainActivity;
 import com.example.student_information_management.databinding.FragmentHomeBinding;
+import com.example.student_information_management.ui.adapter.UserAdapter;
 import com.example.student_information_management.ui.viewModel.MyViewModel;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -32,6 +33,7 @@ public class HomeFragment extends Fragment {
     private FirebaseFirestore db;
     private ExecutorService executorService;
     private MyViewModel model;
+    private UserAdapter userAdapter;
 
     @Override
     public void onAttach(@NonNull Context context) {
@@ -109,5 +111,10 @@ public class HomeFragment extends Fragment {
         });
 
         return binding.getRoot ();
+    }
+
+    public void backUserList(){
+        Intent intent = new Intent(this.getContext(), UserActivity.class);
+        startActivity(intent);
     }
 }

@@ -4,11 +4,13 @@ import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
+import android.util.Log;
 import android.util.Patterns;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
@@ -18,14 +20,20 @@ import androidx.constraintlayout.widget.ConstraintLayout;
 
 import com.example.student_information_management.MainActivity;
 import com.example.student_information_management.R;
+import com.example.student_information_management.data.model.User;
 import com.example.student_information_management.databinding.ActivityLoginBinding;
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.firebase.Timestamp;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -50,7 +58,26 @@ public class LoginActivity extends AppCompatActivity {
             if (checkErrorInput ()) {
                 String email = Objects.requireNonNull (binding.etEmail.getText ()).toString ().trim ();
                 String password = Objects.requireNonNull (binding.etPassword.getText ()).toString ().trim ();
-                loginAccountInBackground (email, password);
+                db.collection("users")
+                        .whereEqualTo("email", email)
+                        .get()
+                        .addOnSuccessListener(queryDocumentSnapshots -> {
+                            if(queryDocumentSnapshots.isEmpty()){
+                                Toast.makeText(this, "User not found", Toast.LENGTH_SHORT).show();
+                            } else {
+                                for (QueryDocumentSnapshot documentSnapshot : queryDocumentSnapshots) {
+                                    User user = documentSnapshot.toObject(User.class);
+                                    if (user.getStatus().equals("Locked")){
+                                        Toast.makeText(this, "Account has been locked", Toast.LENGTH_SHORT).show();
+                                    } else {
+                                        loginAccountInBackground(email, password);
+                                    }
+                                }
+                            }
+                        });
+
+
+
             }
         });
 
