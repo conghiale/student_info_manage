@@ -1,19 +1,18 @@
 package com.example.student_information_management.ui.fragment;
 
 import android.os.Bundle;
-
-import androidx.fragment.app.Fragment;
-
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Toast;
 
+import androidx.fragment.app.Fragment;
+
 import com.example.student_information_management.MainActivity;
 import com.example.student_information_management.R;
-import com.example.student_information_management.databinding.FragmentProvideInfoUserBinding;
 import com.example.student_information_management.data.model.User;
+import com.example.student_information_management.databinding.FragmentProvideInfoUserBinding;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
 

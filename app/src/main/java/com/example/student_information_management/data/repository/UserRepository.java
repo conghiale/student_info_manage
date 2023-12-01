@@ -1,20 +1,16 @@
 package com.example.student_information_management.data.repository;
 
-import android.view.View;
-
 import androidx.lifecycle.MutableLiveData;
 
 import com.example.student_information_management.data.model.User;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.atomic.AtomicReference;
 
 public class UserRepository {
     private FirebaseFirestore db = FirebaseFirestore.getInstance();

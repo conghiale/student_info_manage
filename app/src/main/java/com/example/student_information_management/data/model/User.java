@@ -15,6 +15,7 @@ public class User {
     private List<Timestamp> loginHistory;
 
     private String password;
+    private String avatar;
     public User() {
     }
 
@@ -22,7 +23,7 @@ public class User {
         this.uid = uid;
     }
 
-    public User(String uid, String email, String name, int age, String phoneNumber, String status, String role, List<Timestamp> loginHistory, String password) {
+    public User(String uid, String email, String name, int age, String phoneNumber, String status, String role, List<Timestamp> loginHistory, String password, String avatar) {
         this.uid = uid;
         this.email = email;
         this.name = name;
@@ -32,6 +33,7 @@ public class User {
         this.role = role;
         this.loginHistory = loginHistory;
         this.password = password;
+        this.avatar = avatar;
     }
 
     public String getUid() {
@@ -104,5 +106,13 @@ public class User {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public String getAvatar() {
+        return avatar;
+    }
+
+    public void setAvatar(String avatar) {
+        this.avatar = avatar;
     }
 }

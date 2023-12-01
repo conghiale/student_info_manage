@@ -2,19 +2,17 @@ package com.example.student_information_management.ui.fragment;
 
 import android.content.Intent;
 import android.os.Bundle;
-
-import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
-
 import android.util.Patterns;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.example.student_information_management.MainActivity;
-import com.example.student_information_management.ui.activity.ProvideInfoUserActivity;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
 
+import com.example.student_information_management.MainActivity;
 import com.example.student_information_management.databinding.FragmentCreateAccountBinding;
+import com.example.student_information_management.ui.activity.ProvideInfoUserActivity;
 import com.google.firebase.auth.FirebaseAuth;
 
 import java.util.Objects;

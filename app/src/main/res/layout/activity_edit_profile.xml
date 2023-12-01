@@ -44,6 +44,7 @@
             android:layout_centerHorizontal="true">
 
             <ImageView
+                android:id="@+id/profileAvatar"
                 android:layout_width="150dp"
                 android:layout_height="150dp"
                 android:layout_marginStart="9dp"
@@ -59,6 +60,7 @@
 
 
         <ImageView
+            android:id="@+id/editAvatar"
             android:layout_width="40dp"
             android:layout_height="40dp"
             android:layout_alignParentRight="true"
@@ -81,8 +83,8 @@
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
             android:layout_marginStart="32dp"
-            android:layout_marginEnd="32dp"
 
+            android:layout_marginEnd="32dp"
             android:orientation="vertical"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"

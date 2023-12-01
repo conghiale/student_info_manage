@@ -1,5 +1,16 @@
 package com.example.student_information_management;
 
+import android.content.Context;
+import android.content.Intent;
+import android.graphics.drawable.ColorDrawable;
+import android.os.Bundle;
+import android.view.LayoutInflater;
+import android.view.MenuItem;
+import android.view.View;
+import android.widget.ImageView;
+import android.widget.TextView;
+import android.widget.Toast;
+
 import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBarDrawerToggle;
@@ -12,29 +23,18 @@ import androidx.core.view.GravityCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
-import android.content.Context;
-import android.content.Intent;
-import android.graphics.drawable.ColorDrawable;
-import android.os.Bundle;
-import android.view.LayoutInflater;
-import android.view.MenuItem;
-import android.view.View;
-import android.widget.ImageView;
-import android.widget.TextView;
-import android.widget.Toast;
-
+import com.example.student_information_management.data.model.User;
 import com.example.student_information_management.databinding.ActivityMainBinding;
 import com.example.student_information_management.ui.activity.IntroActivity;
 import com.example.student_information_management.ui.fragment.ChangeEmailFragment;
 import com.example.student_information_management.ui.fragment.ChangePasswordFragment;
 import com.example.student_information_management.ui.fragment.ChangeProfilePictureFragment;
+import com.example.student_information_management.ui.fragment.CreateAccountFragment;
 import com.example.student_information_management.ui.fragment.HistoryUserLoginFragment;
 import com.example.student_information_management.ui.fragment.HomeFragment;
-import com.example.student_information_management.ui.fragment.CreateAccountFragment;
 import com.example.student_information_management.ui.fragment.ProvideInfoUserFragment;
 import com.example.student_information_management.ui.fragment.StudentsFragment;
 import com.example.student_information_management.ui.fragment.UsersFragment;
-import com.example.student_information_management.data.model.User;
 import com.example.student_information_management.ui.viewModel.MyViewModel;
 import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.auth.FirebaseAuth;

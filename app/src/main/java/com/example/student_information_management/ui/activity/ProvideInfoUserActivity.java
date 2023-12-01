@@ -19,18 +19,16 @@ import androidx.constraintlayout.widget.ConstraintLayout;
 
 import com.example.student_information_management.MainActivity;
 import com.example.student_information_management.R;
-import com.example.student_information_management.databinding.ActivityProvideInfoUserBinding;
 import com.example.student_information_management.data.model.User;
+import com.example.student_information_management.databinding.ActivityProvideInfoUserBinding;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
 
-import java.util.HashMap;
 import java.util.Objects;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicReference;
-import java.util.Map;
 
 public class ProvideInfoUserActivity extends AppCompatActivity {
 
@@ -81,6 +79,7 @@ public class ProvideInfoUserActivity extends AppCompatActivity {
                     user.setRole(role);
                     user.setEmail(email);
                     user.setPassword(password);
+                    user.setAvatar("https://firebasestorage.googleapis.com/v0/b/student-info-management-3547f.appspot.com/o/5b204239-6154-4c8a-bc7f-3418993af028.jpg?alt=media&token=b3d1fbc9-8b45-44c4-9a6d-034770bd14c9");
                     providerInfoUserInBackground (user);
                 }
             }

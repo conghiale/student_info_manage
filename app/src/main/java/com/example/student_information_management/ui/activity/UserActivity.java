@@ -1,13 +1,12 @@
 package com.example.student_information_management.ui.activity;
 
+import android.os.Bundle;
+
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.os.Bundle;
-
-import com.example.student_information_management.R;
 import com.example.student_information_management.databinding.ActivityUserBinding;
 import com.example.student_information_management.ui.adapter.UserAdapter;
 import com.example.student_information_management.ui.viewModel.UserViewModel;
@@ -38,7 +37,7 @@ public class UserActivity extends AppCompatActivity {
         });
 
         binding.ivBack.setOnClickListener(v -> {
-            finish();
+            finish();;
         });
     }
 

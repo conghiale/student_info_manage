@@ -6,10 +6,7 @@ import androidx.lifecycle.ViewModel;
 
 import com.example.student_information_management.data.model.User;
 import com.example.student_information_management.data.repository.UserRepository;
-import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.QueryDocumentSnapshot;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class UserViewModel extends ViewModel {
