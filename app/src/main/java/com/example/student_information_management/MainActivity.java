@@ -26,6 +26,7 @@ import androidx.lifecycle.ViewModelProvider;
 import com.example.student_information_management.data.model.User;
 import com.example.student_information_management.databinding.ActivityMainBinding;
 import com.example.student_information_management.ui.activity.IntroActivity;
+import com.example.student_information_management.ui.activity.LoginActivity;
 import com.example.student_information_management.ui.fragment.ChangeEmailFragment;
 import com.example.student_information_management.ui.fragment.ChangePasswordFragment;
 import com.example.student_information_management.ui.fragment.ChangeProfilePictureFragment;
@@ -38,6 +39,7 @@ import com.example.student_information_management.ui.fragment.UsersFragment;
 import com.example.student_information_management.ui.viewModel.MyViewModel;
 import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.Objects;
@@ -48,6 +50,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private ActivityMainBinding binding;
     private ExecutorService executorService;
     private FirebaseFirestore db;
+    private FirebaseAuth auth;
     public static MyViewModel model;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -85,10 +88,49 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         getOnBackPressedDispatcher().addCallback(this, callback);
     }
+    @Override
+    protected void onResume() {
+        super.onResume ();
+        checkStatus ();
+    }
+    @Override
+    protected void onStart() {
+        super.onStart ();
+        checkStatus ();
+    }
+    private void checkStatus() {
+        model.getCurrentUser ().observe (this, user -> {
+            executorService.execute (() -> {
+                db.collection ("users")
+                        .whereEqualTo ("email", user.getEmail ())
+                        .get ()
+                        .addOnSuccessListener (queryDocumentSnapshots -> {
+                            if (!queryDocumentSnapshots.getDocuments ().isEmpty ()) {
+                                DocumentSnapshot document = queryDocumentSnapshots.getDocuments ().get (0);
+                                String status = document.getString ("status");
+                                if (status != null && status.equals ("Locker")) {
+                                    showErrorAlertDialog2 ("This account has been locked", this);
+                                }
+                            }
+                        })
+                        .addOnFailureListener (e -> {
+                            runOnUiThread (() -> {
+                                showErrorAlertDialog(e.getMessage (), this);
+                            });
+                        })
+                        .addOnCanceledListener (() -> {
+                            runOnUiThread (() -> {
+                                showErrorAlertDialog("The system is maintenance. The Login task has been cancelled. Please Login again later", this);
+                            });
+                        });
+            });
+        });
+    }
 
     private void init() {
         executorService = Executors.newFixedThreadPool (1);
         db = FirebaseFirestore.getInstance ();
+        auth = FirebaseAuth.getInstance ();
         getCurrentUser ();
     }
     private void getCurrentUser() {
@@ -155,6 +197,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             binding.navView.setCheckedItem (R.id.nav_CreateAccount);
         } else if (fragment instanceof ProvideInfoUserFragment) {
             Objects.requireNonNull (getSupportActionBar ()).setBackgroundDrawable (new ColorDrawable (ContextCompat.getColor (this, R.color.purple3)));
+        } else if (fragment instanceof HistoryUserLoginFragment) {
+            Objects.requireNonNull (getSupportActionBar ()).setBackgroundDrawable (new ColorDrawable (ContextCompat.getColor (this, R.color.lavender)));
+            binding.navView.setCheckedItem (R.id.nav_history_user);
         }
 
         getSupportFragmentManager().beginTransaction()
@@ -202,6 +247,30 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 //            intent.putExtra ("PASSWORD_UPDATED", "true");
 //            startActivity (intent);
 //            finish ();
+        });
+
+        if (alertDialog.getWindow () != null)
+            alertDialog.getWindow ().setBackgroundDrawable (new ColorDrawable (0));
+        alertDialog.show ();
+        alertDialog.setCancelable(false);
+    }
+    public void showErrorAlertDialog2(String message, Context context) {
+        AlertDialog.Builder builder = new AlertDialog.Builder (context, R.style.AlertDialogTheme);
+        View view = LayoutInflater.from (context).inflate (
+                R.layout.layout_error_dialog, (ConstraintLayout)findViewById (R.id.layoutDialogContainer));
+        builder.setView (view);
+
+        ((TextView) view.findViewById (R.id.tvTitle)).setText ("Error");
+        ((TextView) view.findViewById (R.id.tvMessage)).setText (message);
+        ((AppCompatButton) view.findViewById (R.id.btnAction)).setText ("Okay");
+        ((ImageView) view.findViewById (R.id.ivImageIcon)).setImageResource (R.drawable.baseline_error);
+
+        final AlertDialog alertDialog = builder.create ();
+        view.findViewById (R.id.btnAction).setOnClickListener (v -> {
+            alertDialog.dismiss ();
+            auth.signOut ();
+            startActivity (new Intent (this, LoginActivity.class));
+            finish ();
         });
 
         if (alertDialog.getWindow () != null)

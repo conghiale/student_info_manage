@@ -115,6 +115,12 @@ public class HomeFragment extends Fragment {
 
         });
 
+        binding.tvHistoryUser.setOnClickListener (v -> {
+            if (requireActivity () instanceof MainActivity) {
+                ((MainActivity) requireActivity ()).replaceFragment (new HistoryUserLoginFragment ());
+            }
+        });
+
         binding.tvUserList.setOnClickListener (v -> {
             Intent intent = new Intent(v.getContext(), UserActivity.class);
             v.getContext().startActivity(intent);

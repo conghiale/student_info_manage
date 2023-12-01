@@ -10,8 +10,8 @@ import com.example.student_information_management.data.repository.UserRepository
 import java.util.List;
 
 public class UserViewModel extends ViewModel {
-    private MutableLiveData<List<User>> users = new MutableLiveData<>();
-    private UserRepository userRepository = new UserRepository();
+    private final MutableLiveData<List<User>> users = new MutableLiveData<>();
+    private final UserRepository userRepository = new UserRepository();
 
     public LiveData<List<User>> getUsers() {
         loadUsers();
